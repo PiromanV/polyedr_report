@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="И.Д. Соловьев" />
+  <meta name="author" content="Е.А. Роганов" />
+  <meta name="author" content="А.И. Александров" />
+  <title>Отчёт о модификации проекта «Изображение проекции полиэдра»</title>
+  <link rel="stylesheet" href="https://edu-support.mephi.ru/Stylesheets/Highlighting.css">
+  <link rel="stylesheet" href="https://edu-support.mephi.ru/Stylesheets/markdown.css">
+  
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Отчёт о модификации проекта «Изображение проекции
+полиэдра»</h1>
+<p class="author">И.Д. Соловьев</p>
+<p class="author">Е.А. Роганов</p>
+<p class="author">А.И. Александров</p>
+<p class="date">26.04.2024</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#постановка-задачи" id="toc-постановка-задачи">Постановка
+задачи</a>
+<ul>
+<li><a href="#точная-постановка-задачи"
+id="toc-точная-постановка-задачи">Точная постановка задачи</a></li>
+<li><a href="#интерпретация-задачи-и-идея-решения"
+id="toc-интерпретация-задачи-и-идея-решения">Интерпретация задачи и идея
+решения</a></li>
+</ul></li>
+<li><a href="#подробное-описание-решения-задачи-на-модификацию"
+id="toc-подробное-описание-решения-задачи-на-модификацию">Подробное
+описание решения задачи на модификацию</a></li>
+<li><a
+href="#команды-использовавшиеся-при-получении-итоговых-отчетов-в-заданных-форматах"
+id="toc-команды-использовавшиеся-при-получении-итоговых-отчетов-в-заданных-форматах">Команды,
+использовавшиеся при получении итоговых отчетов в заданных
+форматах</a></li>
+<li><a
+href="#примеры-тестов-для-поддтверждения-корректности-работы-модификации"
+id="toc-примеры-тестов-для-поддтверждения-корректности-работы-модификации">Примеры
+тестов для поддтверждения корректности работы модификации</a></li>
+</ul>
+</nav>
+<h2 id="постановка-задачи">Постановка задачи</h2>
+<h3 id="точная-постановка-задачи">Точная постановка задачи</h3>
+<blockquote>
+<p>Назовём точку в пространстве «хорошей», если её проекция находится
+строго внутри окружности <span class="math inline">\(x^2+y^2 =
+4,\)</span> но строго вне окружности <span class="math inline">\(x^2+y^2
+= 1.\)</span> Модифицируйте эталонный проект таким образом чтобы
+определялась и печаталась следующая характеристика полиэдра: сумма длин
+рёбер, оба из концов которых — «хорошие» точки.</p>
+</blockquote>
+<h3 id="интерпретация-задачи-и-идея-решения">Интерпретация задачи и идея
+решения</h3>
+<p>В данной задаче требуется рассматривать проэкции вершин полиэдра на
+плоскость <span class="math inline">\(Oxy\)</span>, и складывать длины
+таких ребер полиэдра, оба конца которых попадают в заданное кольцо, то
+есть удовлетворяют неравенству: <span class="math display">\[1\leqslant
+M_x^2+M_y^2\leqslant4,\]</span> где <span
+class="math inline">\(M\)</span> — рассматриваемая точка. Также
+необходимо реализовать графический интерфейс, отображающий заданное
+кольцо для визуального контроля правильности работы модификации.</p>
+<h2 id="подробное-описание-решения-задачи-на-модификацию">Подробное
+описание решения задачи на модификацию</h2>
+<ol type="1">
+<li>В класс <code>R3</code> был добвален метод, проверяющий, является ли
+переданная точка «хорошей», при помощи подстановки ее <span
+class="math inline">\(x\)</span> и <span
+class="math inline">\(y\)</span> координат в рассмотренное при
+постановке задачи неравенство.</li>
+<li>Было принято решение выявлять ребра, оканчивающиеся «хорошими»
+точками на этапе задания ребер для каждой грани в методе
+<code>__init__</code> класса <code>Polyedr</code></li>
+<li>Так как некоторые ребра могут принадлежать одной или двум граням, в
+зависимости от конфигурации полиэдра, то необходио проверять, было ли
+ранее посчитано рассматриваемое ребро, или нет. Самой простой с точки
+зрения написания кода проверкой в данном случае является двумерный
+массив смежности. Это «таблица», по столбцам и строкам которой
+расположены все вершины полиэдра, ячейки заполнены единицами. Когда
+вычисляется сумма очередного ребра, ячейка на пересечении строки и
+столбца с соответствующими вершинами начала и конца ребра заполняется
+нулем.</li>
+<li>Также в метод <code>__init__</code> класса <code>Polyedr</code> был
+добавлен дополнительный массив вершин, с непреобразованными
+координатами, чтобы в полученной суммарной длине не учитывался
+коэффициент гомотетии.</li>
+<li>Вычисление длины рёбер было реализовно с помощью операции взятия
+квадратного корня из скалярного произведения.</li>
+<li>Была добавлена отправка в стандартный вывод информации о длинне
+ребер, подходящих под условие.</li>
+<li>В класс <code>Polyedr</code> добавляется метод
+<code>print_good_sum(self)</code>, возвращающий искомую сумму длин рёбер
+с «хорошими» точками на концах.</li>
+<li>В методе <code>draw</code> класса <code>Polyedr</code> была
+добавлена отрисовка кольца и проекций точек, при этом учтен коэффициент
+гомотетии для корректного отображения кольца.</li>
+<li>Были написаны соответствующие тесты, иллюстрирующие правильность
+работы всех написанных методов и модификации в целом.</li>
+</ol>
+<h2
+id="команды-использовавшиеся-при-получении-итоговых-отчетов-в-заданных-форматах">Команды,
+использовавшиеся при получении итоговых отчетов в заданных форматах</h2>
+<p>Здесь <code>pdf.latex</code> и <code>HTML.html5</code> —
+переименованные файлы шаблонов.</p>
+<p>Команда для получения отчета в формате <code>pdf</code>, с
+использованием заданного шаблона.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--template</span> pdf.latex <span class="at">-s</span> <span class="at">--toc</span> <span class="at">--lua-filter</span> ./include-code-files.lua report.md <span class="at">-o</span> report.pdf</span></code></pre></div>
+<p>Команда для получения отчета в формате <code>html</code>, с
+использованием заданного шаблона.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">-o</span> report.html <span class="at">-f</span> markdown <span class="at">-t</span> html <span class="at">-s</span> <span class="at">--toc</span> <span class="at">--lua-filter</span> ./include-code-files.lua <span class="at">--mathjax</span> <span class="at">--template</span> html.html5 report.md</span></code></pre></div>
+<p>Команда для получения отчета в формате <code>docx</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">-s</span> report.md <span class="at">--toc</span> <span class="at">--lua-filter</span> ./include-code-files.lua <span class="at">-o</span> report.docx</span></code></pre></div>
+<h2
+id="примеры-тестов-для-поддтверждения-корректности-работы-модификации">Примеры
+тестов для поддтверждения корректности работы модификации</h2>
+<ul>
+<li>Коробка, шесть из восьми вершин которой попадают в заданное
+кольцо.</li>
+</ul>
+<p><img src="box.png" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@classmethod</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setUpClass(<span class="va">self</span>):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        fake_file_content <span class="op">=</span> <span class="st">&quot;&quot;&quot;200.0	60.0	-140.0	60.0</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">8	5	20</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">-1	-1	1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">-1	1	1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">1	1	1</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">1	-1	1</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">-1	-1	-1</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">-1	1	-1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">1	1	-1</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">1	-1	-1</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">4	1    2    3    4</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="st">4	5    6    2    1</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">4	3    2    6    7</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">4	3    7    8    4</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="st">4	1    4    8    5&quot;&quot;&quot;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        fake_file_path <span class="op">=</span> <span class="st">&#39;data/poly_box.geom&#39;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> patch(<span class="st">&#39;shadow.polyedr.open&#39;</span>.<span class="bu">format</span>(<span class="va">__name__</span>),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                   new<span class="op">=</span>mock_open(read_data<span class="op">=</span>fake_file_content)) <span class="im">as</span> _file:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.poly_box <span class="op">=</span> Polyedr(fake_file_path)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            _file.assert_called_once_with(fake_file_path)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a> <span class="co"># polyedr perimetr</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_box_perimetr(<span class="va">self</span>):</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.assertEqual(<span class="va">self</span>.poly_box.good_perimetr, <span class="dv">12</span>)</span></code></pre></div>
+<ul>
+<li>Куб, шесть из восьми вершин которого попадают в заданное
+кольцо.</li>
+</ul>
+<p><img src="cube.png" /></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@classmethod</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setUpClass(<span class="va">self</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        fake_file_content <span class="op">=</span> <span class="st">&quot;&quot;&quot;200.0	45.0	45.0	30.0</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">8	6	24</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">-1	-1	1</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">-1	1	1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">1	1	1</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">1	-1	1</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">-1	-1	-1</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">-1	1	-1</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">1	1	-1</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">1	-1	-1</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">4	1    2    3    4</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">4	5    6    2    1</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">4	3    2    6    7</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">4	3    7    8    4</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">4	1    4    8    5</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">4	8    7    6    5&quot;&quot;&quot;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        fake_file_path <span class="op">=</span> <span class="st">&#39;data/poly_cube.geom&#39;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> patch(<span class="st">&#39;shadow.polyedr.open&#39;</span>.<span class="bu">format</span>(<span class="va">__name__</span>),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                   new<span class="op">=</span>mock_open(read_data<span class="op">=</span>fake_file_content)) <span class="im">as</span> _file:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.poly_cube <span class="op">=</span> Polyedr(fake_file_path)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            _file.assert_called_once_with(fake_file_path)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># double edges (with two facets) can be countable</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_cube_perimetr(<span class="va">self</span>):</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.assertEqual(<span class="va">self</span>.poly_cube.good_perimetr, <span class="dv">12</span>)</span></code></pre></div>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    processEscapes: false,
+    processRefs: true,
+    processEnvironments: true,
+    macros: {
+      sh: "{\\mathop{\\mathrm{sh}\\ }\\nolimits}",
+      ch: "{\\mathop{\\mathrm{ch}\\ }\\nolimits}",
+      tg: "{\\mathop{\\mathrm{tg}\\ }\\nolimits}",
+      ctg: "{\\mathop{\\mathrm{ctg}\\ }\\nolimits}",
+      arctg: "{\\mathop{\\mathrm{arctg}\\ }\\nolimits}",
+      arcctg: "{\\mathop{\\mathrm{arcctg}\\ }\\nolimits}",
+      th: "{\\mathop{\\mathrm{th}\\ }\\nolimits}",
+      cth: "{\\mathop{\\mathrm{cth}\\ }\\nolimits}",
+      cosec: "{\\mathop{\\mathrm{cosec}\\ }\\nolimits}",
+      Prob: "{\\mathop{\\mathsf{P}}\\nolimits}",
+      Variance: "{\\mathop{\\mathsf{D}}\\nolimits}",
+      nod: "{\\mathop{\\mathrm{н.о.д.}}\\nolimits}",
+      nok: "{\\mathop{\\mathrm{н.о.к.}}\\nolimits}",
+      NOD: "{\\mathop{\\mathrm{НОД}}\\nolimits}",
+      NOK: "{\\mathop{\\mathrm{НОК}}\\nolimits}",
+      Proj: "{\\mathop{\\mathrm{Пр}}\\nolimits}"
+    }
+  },
+  options: {
+    skipHtmlTags: ['script','noscript','style','textarea','pre','code'],
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  svg: {
+    displayAlign: 'left'
+  }
+};
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+type="text/javascript"></script>
+</body>
+</html>
