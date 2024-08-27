@@ -56,20 +56,23 @@ $Oxy$, и складывать длины таких полностью види
 шаблона.
 
 ~~~sh
-pandoc --template pdf.latex -s --toc --lua-filter ./include-code-files.lua report.md -o report.pdf
+pandoc --template pdf.latex -s --toc --lua-filter ./
+include-code-files.lua report.md -o report.pdf
 ~~~
 
 Команда для получения отчета в формате `html`, с использованием заданного 
 шаблона.
 
 ~~~sh
-pandoc -o report.html -f markdown -t html -s --toc --lua-filter ./include-code-files.lua --mathjax --template html.html5 report.md
+pandoc -o report.html -f markdown -t html -s --toc --lua-filter ./
+include-code-files.lua --mathjax --template html.html5 report.md
 ~~~
 
 Команда для получения отчета в формате `docx`.
 
 ~~~sh
-pandoc -s report.md --toc --lua-filter ./include-code-files.lua -o report.docx
+pandoc -s report.md --toc --lua-filter ./include-code-files.lua 
+-o report.docx
 ~~~
 
 ## Примеры тестов для поддтверждения корректности работы модификации
